@@ -19,6 +19,8 @@
   "confirm_password": "確認密碼",
   "contact_customer_service": "聯絡客服",
   "contact_us": "聯絡我們",
+  "token_error": "token錯誤",
+  "wait_for_token": "請稍後獲取token",
   "current_package": "目前套餐",
   "current_token_price": "目前積分價格",
   "effective_time": "生效時間",

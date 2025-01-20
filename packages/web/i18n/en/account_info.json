@@ -19,6 +19,8 @@
   "confirm_password": "Confirm Password",
   "contact_customer_service": "Contact customer service",
   "contact_us": "Contact us",
+  "token_error": "token_error",
+  "wait_for_token": "wait_for_token",
   "current_package": "Current plan",
   "current_token_price": "Current points price",
   "effective_time": "Effective time",

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -592,6 +592,52 @@ const Other = ({ onOpenContact }: { onOpenContact: () => void }) => {
   const { feConfigs } = useSystemStore();
   const { t } = useTranslation();
   const { isPc } = useSystem();
+  const { toast } = useToast();
+  const { userInfo, updateUserInfo } = useUserStore();
+  const [token, setToken] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { reset } = useForm<UserUpdateParams>({
+    defaultValues: userInfo as UserType
+  });
+
+  // 获取 token
+  const getToken = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/support/user/account/token');
+      if (!res.ok) {
+        throw new Error('Failed to fetch token');
+      }
+      const data = await res.json();
+      if (data.data?.token) {
+        setToken(data.data.token);
+      }
+    } catch (error) {
+      console.error('Failed to get token:', error);
+      toast({
+        title: t('account_info:token_error'),
+        status: 'error'
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast, t]);
+
+  useEffect(() => {
+    getToken();
+  }, [getToken]);
+
+  const jumpToWorkOrder = useCallback(() => {
+    if (!token) {
+      toast({
+        title: t('account_info:wait_for_token'),
+        status: 'warning'
+      });
+      return;
+    }
+    window.open(`${process.env.NEXT_PUBLIC_WORKORDER_URL}?token=${token}`, '_blank');
+  }, [token, toast, t]);
 
   return (
     <Box>
@@ -629,6 +675,12 @@ const Other = ({ onOpenContact }: { onOpenContact: () => void }) => {
             </Box>
           </Flex>
         )}
+        <Flex onClick={jumpToWorkOrder} {...ButtonStyles}>
+          <MyIcon name={'common/courseLight'} w={'18px'} color={'myGray.600'} />
+          <Box ml={2} flex={1}>
+            工单系统
+          </Box>
+        </Flex>
       </Grid>
     </Box>
   );
